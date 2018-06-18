@@ -1,8 +1,9 @@
 # react-router4-redux-webpack
-* use react,react-router4,redux and packaged by webpack
-* this is react starter kit,client is build by on react ,react-ruoter4,redux,and server i used koa,and by the way,
-if you like you can use express and so on
-* async request used axios and send request to koa server,and for cros,i used webpack-dev-server proxy plugin,u can set it up easyly
+* use react,react-router4.0,redux and server based by node express, packaged by webpack4.0
+* this is react starter kit,client is build by on react ,react-ruoter4,redux,and server i used express,and by the way,
+if you like you can use koa,thinkjs and so on,in this project i used antd ui framework
+* async request used axios and send request to express server,and for cros,i used webpack-dev-server proxy plugin,u can set it up easyly
+* for codesplitting,all components will be asynchronous loading
 # for run
 ```
 npm i react-pw-cli
@@ -11,67 +12,84 @@ cd [your project name]
 npm i
 start client: npm start
 build client:npm run build
-start mock server: npm run server
+start mock server: npm run mock
 ```
 
 ## 说明
-* 这是一个基于react构建的开发脚手架，项目结构满足大部分开发需求，项目采用了react，react-router4，redux进行单页构建，并采用webpack3的版本来打包
+* 这是一个基于react构建的开发脚手架，项目结构满足大部分开发需求，项目采用了react，react-router4.0，redux进行单页构建，并采用webpack4的版本来打包
 所有组件全部异步加载
-* 数据异步请求采用的axios，并使用webpack-dev-server做一次代理到koa启动的mock服务上，当然也可以使用express等node服务端框架
+* 数据异步请求采用的axios，并使用webpack-dev-server做一次代理到express启动的服务上，当然也可以使用koa,thinkjs等node服务端框架
 
-**react-router4.0**后改动比较大，3.0以前支持导出一个routes对象来配置路由，现在需要依赖他的react-router-dom来配置，
-但官方文档也给出了一个例子可以参考
+**react-router4.0**后改动比较大，几乎说是重写了router，现在的react-router只是一个基本核心库，多数的功能都放入了react-router-dom,react-router-config中，在router4以前，我们是使用getComponent的的方式来实现按需加载的，router4中，getComponent方法已经被移除。
+
+### react-router4打包异步加载组件方式
+react-router4.0之前利用getComponent的方法结合webpack的异步加载方式可以很容易的做到codesplit，但之后移除了getComponent就没办法沿用之前的方式了，但是可以借助ES6中引入的异步载入方法**import**在结合async,await语法来实现我们的需求，首先我们写一个异步加载react组件的方法，
 ```
-const RouteWithSubRoutes = (route) => (
-  <Route path={route.path} render={props => (
-    // pass the sub-routes down to keep nesting
-    <route.component {...props} routes={route.routes}/>
-  )}/>
-)
-const routerMaker = routes.map((route, i) => (
-    <RouteWithSubRoutes key={i} {...route}/>
-))
+export default function asyncComponent(importComponent) {
+    class AsyncComponent extends Component {
+        constructor(props) {
+            super(props)
 
-```
-### webpack打包异步加载组件方式
-react-router4.0之前在导出routes的时候，组件如果是配置成异步的webpack会自动codesplit，但之后不支持导出routes对象形式后，可以利用一个官方提供的lazy的方式来实现，代码见lazyLoad.js
-
-请在路由文件中使用下面的方式来配置路由
-
-```
-const Loading = () => {
-  return <div>loading component....</div>
-}
-const createComponent = (component) =>() => {
-    let AsyncComponent = (
-        <Lazyload load={component}>
-            {
-                (Async) => Async?<Async />:<Loading/>
+            this.state = {
+                component: null
             }
-        </Lazyload>
-    )
+        }
+
+        async componentDidMount() {
+            const { default: component } = await importComponent()
+
+            this.setState({
+                component: component
+            })
+        }
+
+        render() {
+            const C = this.state.component
+
+            return C ? <C {...this.props} /> : 'loading....'
+        }
+    }
+
     return AsyncComponent
 }
+```
+可以看到以上方法充分利用了es7的异步语法来实现了组件的异步载入，接下来我们在路由这样配置即可,并且支持嵌套
+
+
+```
 const routes = [
   {
-    path:'/welcome',
-    component:Welcome
-  },
-  {
-    path:'/table',
-    component:createComponent(TablePage)
-  },
-  {
-    path:'/list',
-    component:createComponent(ListPage)
+    path:'/',
+    // exact:false
+    component:Layout,
+    routes:[
+      {
+        path:'/dashbord',
+        component:asyncComponentLoader(() => import('../containers/DashBord')),
+        iconType:'dashboard',
+        name:'dashboard',
+        ....
+      }
+    ]
   }
 ];
 ```
+### 打包说明
+打包使用了现在最新的webpack4.0+的版本，算是目前跟得上潮流了，在3.0后4.0有了很多性能提升，打包速度更快并且利用好tree shaking让package的体积更小，首先利用webpack的DllPluginPlugin将平时不怎么变动的js打成一个dll包后引入，其他业务代码经过codespliting后在异步加载更加高效
+* webpack.base.config.js 基础配置
+* webpack.dev.config.js 开发环境配置
+* webpack.prod.config.js 发布到生产环境
+* webpack.dll.config.js 公共js库配置
 ## 项目结构
 * actions 更改store同步/异步的方法集合
 * components 公共组件库
 * containers 容器类组件
-* layout模板布局 可不用，自己做相应删减
-* routes 路由配置
+* layout模板布局 defult是默认模板
+* routes 导出路由配置
 * store 导出页面的store
 * utils 一些公共方法
+* server 启动express服务用于提供api
+
+
+
+
