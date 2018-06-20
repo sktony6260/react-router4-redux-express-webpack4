@@ -1,0 +1,18 @@
+{
+  "presets": [
+    ["env",{
+      "targets": {
+        "browsers": ["> 1%", "last 2 versions", "safari >= 7"]
+      }
+    }],
+    "stage-0",
+    "react"
+  ],
+  "plugins": [
+    ["transform-runtime", { "polyfill": false }],
+    "transform-decorators-legacy",
+    "transform-async-to-generator",
+    "syntax-dynamic-import",
+    ["import", {"libraryName": "antd", "libraryDirectory": "es", "style": 'css' }]
+  ]
+}

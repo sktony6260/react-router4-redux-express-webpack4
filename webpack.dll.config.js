@@ -75,6 +75,9 @@ if (fs.pathExistsSync(vendorFilePath)) {
 const verdor_list = [
   'react',
   'react-dom',
+  'react-router-dom',
+  'react-router-config',
+  'react-redux',
   'redux',
   'redux-actions',
   'redux-promise',
