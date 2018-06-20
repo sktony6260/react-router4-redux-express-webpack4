@@ -1,6 +1,6 @@
 # react-router4-redux-webpack
 * use react,react-router4.0,redux and server based by node express, packaged by webpack4.0
-* this is react starter kit,client is build by on react ,react-ruoter4,redux,and server i used express,and by the way,
+* this is react scaffold,client is build by on react ,react-ruoter4,redux,and server i used express,and by the way,
 if you like you can use koa,thinkjs and so on,in this project i used antd ui framework
 * async request used axios and send request to express server,and for cros,i used webpack-dev-server proxy plugin,u can set it up easyly
 * for codesplitting,all components will be asynchronous loading
