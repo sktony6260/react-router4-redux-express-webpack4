@@ -29,13 +29,13 @@ const getOutPath = () => {
   if (CONFIG.IS_DEV) {
     outPut = Object.assign(outPut,{
       filename:'[name].js',
-      chunkFilename: `js/a.[name].[chunkhash:10].js`
+      chunkFilename: `js/asyc.[name].[chunkhash:10].js`
     });
   }else{
     outPut = Object.assign(outPut,{
       path:CONFIG.DIST_PATH,
       filename:'[name].[chunkhash:5].min.js',
-      chunkFilename: `js/a.[name].[chunkhash:10].min.js`
+      chunkFilename: `js/asyc.[name].[chunkhash:10].min.js`
     })
   }
   return outPut;

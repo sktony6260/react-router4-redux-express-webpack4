@@ -9,13 +9,13 @@ const routes = [
     routes:[
       {
         path:'/dashbord',
-        component:asyncComponentLoader(() => import('../containers/DashBord')),
+        component:asyncComponentLoader(() => import(/* webpackChunkName: "dashbord" */ '../containers/DashBord')),
         iconType:'dashboard',
         name:'dashboard',
         routes:[
           {
             path:'/dashbord/analysis',
-            component:asyncComponentLoader(() => import('../containers/DashBord/Analysis')),
+            component:asyncComponentLoader(() => import(/* webpackChunkName: "analysis" */ '../containers/DashBord/Analysis')),
             name:'analysis'
           }
         ]
@@ -23,7 +23,7 @@ const routes = [
       {
         path:'/reqtest',
         exact:true,
-        component:asyncComponentLoader(() => import('../containers/ReqTest/Posts')),
+        component:asyncComponentLoader(() => import(/* webpackChunkName: "request-demo" */ '../containers/ReqTest/Posts')),
         iconType:'sync',
         name:'request'
       }

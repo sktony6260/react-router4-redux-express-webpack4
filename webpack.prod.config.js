@@ -8,7 +8,7 @@ const chalk  = require('chalk');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const disPath = CONFIG.DIST_PATH;
 console.log(chalk.green('>deleting dist files...'));
-rmNpm(path.join(disPath,'*.map'));
+// rmNpm(path.join(disPath,'*.map'));
 const _config = merge(baseConfig,{
   plugins:[
     new webpack.optimize.ModuleConcatenationPlugin(),
